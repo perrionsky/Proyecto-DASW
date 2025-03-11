@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The Tech State</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">The Tech State</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="about">About</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Topics
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/?section=code">Code</a>
+                <a class="dropdown-item" href="/?section=design">Design</a>
+                <a class="dropdown-item" href="/?section=blockchain"
+                  >Blockchain</a
+                >
+                <a class="dropdown-item" href="/?section=entrepreneurship"
+                  >Entrepreneurship</a
+                >
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="/">All topics</a>
+              </div>
+            </li>
+          </ul>
+          <div class="form-inline my-2 my-lg-0">
+            <input
+              id="search-box"
+              class="form-control mr-sm-2"
+              type="search"
+              placeholder="Posts and users"
+              aria-label="Search"
+            />
+            <button
+              id="search-box-btn"
+              class="btn btn-outline-success my-2 my-sm-0"
+            >
+              Search
+            </button>
+          </div>
+          <br />
+          <div>
+            <!--Here goes the discord auth!-->
+            <button
+              class="ml-5 btn-primary btn"
+              id="user-btn"
+              onclick="window.location.href='/users/login'"
+            >
+              User
+            </button>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="ml-3 mt-3">
+        <div>
+          <h2 class="d-inline">
+            <!-- {{ section|capfirst }} -->
+            All posts
+          </h2>
+          &nbsp;
+          <div class="bg-warning rounded-right d-inline align-self-center">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </div>
+          <br />
+        </div>
+      </div>
+      <br />
+      <br />
+      <div class="d-flex flex-wrap justify-content-center" id="card-container">
+        <!--Start of the card IMPORATNT, cards should reference if the admin post it, there should be an option called Edit POST only available for owners-->
+        <div class="card m-2 h-25" style="width: 18rem">
+          <div class="h-25">
+            <img
+              class="card-img-top img-fluid"
+              style="height: 17rem"
+              alt="No attachments"
+              src="/media/{{ post.attachments.get_queryset.0.file.name }}"
+            />
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Post Title</h5>
+            <small><i>Summary</i></small>
+            <p class="card-text">Post summary</p>
+            <small
+              ><i>By <b>Post username</b></i></small
+            >
+            <br />
+            <a href="./posts/post_detail.html" class="card-link">
+              See full post
+            </a>
+
+            <!--If is owner? render this button-->
+            <button
+              class="btn-post-delete btn btn-danger"
+              onclick="deletePostConfirmation({{ post.post_id }})"
+            >
+              Delete post
+            </button>
+
+            <br />
+            <br />
+            <div class="align-bottom">
+              <small>Section</small>
+              <div class="d-flex justify-content-left">
+                <div class="rounded p-1 text-center shadow w-75 bg-warning">
+                  Section goes here
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--End of the card-->
+
+        <!--This html is going to be loaded if and only if no posts we have on there-->
+        <!-- <div>
+        <h5>No posts yet, feed updated</h5>
+      </div> -->
+      </div>
+    </main>
+    <footer>
+      <div class="footer">
+        <div class="d-flex justify-content-center w-100">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item" id="prev-page">
+                <a
+                  class="page-link"
+                  href="javascript:void(0);"
+                  aria-label="Previous"
+                >
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <!-- Los números de página se insertarán aquí dinámicamente -->
+              <li class="page-item" id="next-page">
+                <a
+                  class="page-link"
+                  href="javascript:void(0);"
+                  aria-label="Next"
+                >
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </footer>
+  </body>
+  <script>
+    function deletePost(postId, postUsername) {
+      // Confirmar la acción del usuario
+      if (!confirm("¿Estás seguro de que deseas eliminar este post?")) {
+        return;
+      }
+
+      fetch(`/users/${postUsername}/${postId}/`, {
+        // Asegúrate de ajustar esta URL para que coincida con la ruta correcta del servidor
+        method: "DELETE",
+        credentials: "include", // Necesario para incluir cookies (CSRF y sessionid)
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.state === "success") {
+            alert("Post eliminado exitosamente.");
+            // Recargar los posts o quitar el post eliminado del DOM
+            loadPosts();
+          } else {
+            alert("Error al eliminar el post: " + data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error al eliminar el post:", error);
+          alert("Error al eliminar el post.");
+        });
+    }
+
+    function loadPosts() {
+      fetch("/api/posts/") // Cambiar esta URL si es necesario
+        .then((response) => response.json())
+        .then((data) => {
+          const posts = data.message;
+          const container = document.getElementById("card-container");
+          container.innerHTML = ""; // Limpiar contenido previo
+          // const usernameLoggedin = sessionStorage.getItem("username");
+          const cookies = document.cookie
+            .split("; ")
+            .reduce((prev, current) => {
+              const [name, ...value] = current.split("=");
+              prev[name] = value.join("=");
+              return prev;
+            }, {});
+          
+          const usernameLoggedin = cookies.username;
+          console.log("USERNAME LOGGEDIN!! " + usernameLoggedin);
+
+          // Usar un bucle `for` para iterar sobre los posts
+          for (let i = 0; i < posts.length; i++) {
+            const post = posts[i];
+            console.log(post);
+            let cardHtml;
+
+            if (
+              usernameLoggedin !== undefined &&
+              usernameLoggedin.toString() === post.username.toString()
+            ) {
+              cardHtml = `
+                <div class="card m-2 h-25" style="width: 18rem;">
+                  <div class="h-25">
+                    <img class="card-img-top img-fluid" style="height: 17rem;" alt="Imagen del Post"
+                      src="${post.img_url || "/path/to/default/image.jpg"}">
+                  </div>
+                  <div class="card-body">
+                    <p class="card-text" style="background-color: orange; border-radius: 5px; padding: 2px; text-align: center;">${
+                      post.section
+                    }</p>
+                    <h5 class="card-title">${post.title}</h5>
+                    <small><i>Por <b>${post.username}</b></i></small>
+                    <p class="card-text">${post.summary}</p>
+                    <a href="/posts-d/${post.username}/${post.postId}" class="card-link">Ver post completo</a>
+                    <button class='btn btn-danger' onclick="deletePost('${
+                      post.postId
+                    }', '${post.username}')">Eliminar post</button>
+                  </div>
+                </div>
+              `;
+            } else {
+              cardHtml = `
+                <div class="card m-2 h-25" style="width: 18rem;">
+                  <div class="h-25">
+                    <img class="card-img-top img-fluid" style="height: 17rem;" alt="Imagen del Post"
+                      src="${post.img_url || "/path/to/default/image.jpg"}">
+                  </div>
+                  <div class="card-body">
+                    <p class="card-text" style="background-color: orange; border-radius: 5px; padding: 2px; text-align: center;">${
+                      post.section
+                    }</p>
+                    <h5 class="card-title">${post.title}</h5>
+                    <small><i>Por <b>${post.username}</b></i></small>
+                    <p class="card-text">${post.summary}</p>
+                    <a href="/posts-d/${post.username}/${
+                post.postId
+              }" class="card-link">Ver post completo</a>
+                  </div>
+                </div>
+              `;
+            }
+            container.innerHTML += cardHtml; // Añadir nueva tarjeta al contenedor
+          }
+        })
+        .catch((error) => {
+          console.error("Error al cargar los posts:", error);
+        });
+    }
+
+    // Cargar posts cuando la página esté lista
+    document.addEventListener("DOMContentLoaded", loadPosts);
+
+    var inputSearchText = document.getElementById("search-box");
+    var btnSearch = document.getElementById("search-box-btn");
+
+    btnSearch.onclick = function () {
+      let searchContent = inputSearchText.value;
+      let urlConf =
+        "{% url 'blog:index-blog-view' %}" + `?searchTerm=${searchContent}`;
+      window.location.href = urlConf;
+    };
+  </script>
+</html>

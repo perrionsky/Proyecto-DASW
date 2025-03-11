@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+      {% load bootstrap4 %}
+      {% bootstrap_css %}
+        <title>
+            The Tech Station
+        </title>
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block head %}
+        {% endblock %}
+    </head>
+    <body>
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="/">The Tech State</a>
+                <button class="navbar-toggler" type="button" 
+                    data-toggle="collapse" data-target="#navbarSupportedContent" 
+                    aria-controls="navbarSupportedContent" aria-expanded="false" 
+                    aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'about-view' %}">About</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Topics
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/?section=code">Code</a>
+                        <a class="dropdown-item" href="/?section=design">Design</a>
+                        <a class="dropdown-item" href="/?section=blockchain">Blockchain</a>
+                        <a class="dropdown-item" href="/?section=entrepreneurship">Entrepreneurship</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/">All topics</a>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="form-inline my-2 my-lg-0">
+                    <input id="search-box" class="form-control mr-sm-2" type="search" placeholder="Posts and users" aria-label="Search">
+                    <button id="search-box-btn" class="btn btn-outline-success my-2 my-sm-0">Search</button>
+                  </div>
+                  <br>
+                  <div>
+                    <button class="ml-5 btn-primary btn" id='user-btn' onclick="window.location.href='/users/login'">
+                      User
+                    </button>
+                  </div>
+                </div>
+              </nav>
+        </header>
+        <main>
+            {% block body %}
+            {% endblock %}
+        </main> 
+        <footer>
+            <div class="footer">
+                {% block footer %}
+                {% endblock %}
+            </div>
+        </footer>
+        {% bootstrap_javascript jquery='full' %}
+    </body>
+    <script>
+      var inputSearchText = document.getElementById("search-box")
+      var btnSearch = document.getElementById("search-box-btn");
+      
+      btnSearch.onclick = function() {
+        let searchContent = inputSearchText.value;
+        let urlConf = "{% url 'blog:index-blog-view' %}" + `?searchTerm=${searchContent}`;
+        window.location.href = urlConf;
+      }
+    </script>
+</html>

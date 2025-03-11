@@ -1,0 +1,43 @@
+<div class="card m-2 h-25" style="width: 18rem;">
+    <div class="h-25">
+        <img class="card-img-top img-fluid" style="height: 17rem;" alt="No attachments" src="/media/{{ post.attachments.get_queryset.0.file.name }}">
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <small><i>Summary</i></small> 
+        <p class="card-text">
+            {{ post.summary }}
+        </p>
+        <small><i>By <b>{{ post.user.username }}</b></i></small>
+        <br>
+        <a href="{% url 'blog:post-detail' post.post_id %}" class="card-link">
+            See full post
+        </a>
+        {% if is_owner %}
+            <button class='btn-post-delete btn btn-danger' onclick="deletePostConfirmation({{ post.post_id }})">
+                Delete post
+            </button> 
+        {% endif %}
+        <br>
+        <br>
+        <div class="align-bottom">
+            <small>Section</small>
+            <div class="d-flex justify-content-left">
+                <div class="rounded p-1 text-center shadow w-75 bg-warning">
+                    {{ post.section }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    deletePostConfirmation = function(postId) {
+        let confirmDeletion = window.confirm("Delete post?");
+        if (confirmDeletion) {
+            urlPath = "{% url 'blog:post-delete' 1 %}"; // since we cannot configure the url previously
+                                                        // we replace the pk with the post one
+            urlPath = urlPath.replace('1', postId);
+            window.location.href = urlPath;
+        }
+    }
+</script>
